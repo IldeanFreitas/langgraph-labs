@@ -1,0 +1,72 @@
+# CI do laboratório. Dois jobs:
+#   qualidade    -> ruff + gate da BrasilAPI (tests/)
+#   labs-sem-llm -> labs 3 e 4 com --sem-llm: prova a mecânica (Postgres, interrupt,
+#                   Send, subgrafos) sem gastar cota de modelo nem expor chave.
+# Volume na BrasilAPI por execução: ~10 requisições. Não rode em loop.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  qualidade:
+    name: lint + gate da BrasilAPI
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10
+        with:
+          enable-cache: true
+      - run: uv sync --locked
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run pytest tests -q
+
+  labs-sem-llm:
+    name: labs 3 e 4 sem LLM
+    runs-on: ubuntu-latest
+    needs: qualidade
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: langgraph
+          POSTGRES_PASSWORD: langgraph
+          POSTGRES_DB: langgraph
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U langgraph"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+    env:
+      POSTGRES_URI: postgresql://langgraph:langgraph@localhost:5432/langgraph
+      PYTHONIOENCODING: utf-8
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10
+        with:
+          enable-cache: true
+      - run: uv sync --locked
+
+      - name: lab 4 - paralelo (Send) e supervisor (subgrafos + handoff)
+        shell: bash
+        run: |
+          set -o pipefail
+          uv run python lab04/mesa.py paralelo --sem-llm | tee /dev/stderr | grep -q "ITAÚ UNIBANCO"
+          uv run python lab04/mesa.py supervisor --sem-llm | tee /dev/stderr | grep -q "handoff valor=70040912"
+
+      - name: lab 3 - interrupt e retomada em processos separados
+        shell: bash
+        run: |
+          set -o pipefail
+          L="uv run python lab03/persistente.py"
+          $L perguntar ci-1 "CEP 68502290" --sem-llm | tee /dev/stderr | grep -q "Marabá/PA"
+          $L perguntar ci-2 "CNPJ 00000000000191" --sem-llm | tee /dev/stderr | grep -q "PAUSADO"
+          $L estado ci-2 | tee /dev/stderr | grep -q "('aprovar',)"
+          $L retomar ci-2 sim | tee /dev/stderr | grep -q "aprovado por humano"
+          $L historico ci-1 | tee /dev/stderr | grep -q "5 checkpoints"
+          $L memoria | tee /dev/stderr | grep -q "cnpj:00000000000191"

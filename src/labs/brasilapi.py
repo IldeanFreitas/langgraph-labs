@@ -13,7 +13,9 @@ import httpx
 
 BASE_URL = "https://brasilapi.com.br/api"
 
-_client = httpx.Client(base_url=BASE_URL, timeout=10.0, headers={"User-Agent": "langgraph-labs/0.1"})
+_client = httpx.Client(
+    base_url=BASE_URL, timeout=10.0, headers={"User-Agent": "langgraph-labs/0.1"}
+)
 
 
 class BrasilAPIError(RuntimeError):

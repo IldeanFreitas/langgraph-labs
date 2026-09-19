@@ -29,7 +29,7 @@ from langgraph.types import CachePolicy, Command, RetryPolicy
 from pydantic import BaseModel, Field
 from typing_extensions import TypedDict
 
-from labs.brasilapi import BrasilAPIError, get
+from labs.brasilapi import get
 from labs.config import get_model
 
 # Contador para provar o ponto do lab: quantas vezes o LLM foi chamado.
@@ -73,8 +73,10 @@ def classificar(state: State) -> dict:
     global CHAMADAS_LLM
     CHAMADAS_LLM += 1
 
-    c = get_model().with_structured_output(Classificacao).invoke(
-        f"Classifique a pergunta do usuario.\n\nPergunta: {state['pergunta']}"
+    c = (
+        get_model()
+        .with_structured_output(Classificacao)
+        .invoke(f"Classifique a pergunta do usuario.\n\nPergunta: {state['pergunta']}")
     )
     return {"tipo": c.tipo, "valor": c.valor, "log": [f"classificado como {c.tipo}"]}
 
@@ -99,12 +101,14 @@ def consultar_cep(state: State) -> dict:
 def consultar_ddd(state: State) -> dict:
     d = get(f"/ddd/v1/{state['valor']}")
     cidades = ", ".join(d["cities"][:5])
-    return {"resultado": f"DDD {state['valor']} ({d['state']}): {cidades}...", "log": ["consultou ddd"]}
+    texto = f"DDD {state['valor']} ({d['state']}): {cidades}..."
+    return {"resultado": texto, "log": ["consultou ddd"]}
 
 
 def consultar_banco(state: State) -> dict:
     d = get(f"/banks/v1/{state['valor']}")
-    return {"resultado": f"{d['name']} - {d['fullName']} (ISPB {d['ispb']})", "log": ["consultou banco"]}
+    texto = f"{d['name']} - {d['fullName']} (ISPB {d['ispb']})"
+    return {"resultado": texto, "log": ["consultou banco"]}
 
 
 def consultar_cnpj(state: State) -> dict:
@@ -120,7 +124,9 @@ def desconhecido(state: State) -> Command[Literal["__end__"]]:
     """
     return Command(
         update={
-            "resultado": "Nao entendi o tipo de consulta. Informe um CEP, CNPJ, DDD ou codigo de banco.",
+            "resultado": (
+                "Nao entendi o tipo de consulta. Informe um CEP, CNPJ, DDD ou codigo de banco."
+            ),
             "log": ["tipo desconhecido - encerrado"],
         },
         goto=END,

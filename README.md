@@ -1,6 +1,9 @@
 # Laboratorio LangGraph — do basico ao avancado
 
-> **Status: Em evolução** — labs 1 a 4 executados em 19/09/2026 (labs 3 e 4 com `gemini-3.7-flash`, porque a cota diária do 3.8 acabou no meio do dia). O lab 5 entram no repositório conforme forem concluídos.
+[![CI](https://github.com/IldeanFreitas/langgraph-labs/actions/workflows/ci.yml/badge.svg)](https://github.com/IldeanFreitas/langgraph-labs/actions/workflows/ci.yml)
+[![Licença MIT](https://img.shields.io/badge/licen%C3%A7a-MIT-blue.svg)](LICENSE)
+
+> **Status: Em evolução** — labs 1 a 4 executados em 19/09/2026 (labs 3 e 4 com `gemini-3.7-flash`, porque a cota diária do 3.8 acabou no meio do dia). O lab 5 entra no repositório quando for concluído.
 
 Estudo prático de [LangGraph](https://docs.langchain.com/oss/python/langgraph/overview) 1.2,
 construindo agentes e workflows sobre a [BrasilAPI](https://brasilapi.com.br/docs) — API pública,
@@ -85,3 +88,13 @@ Compare o lab 2 com o lab 1: e a melhor aula de quando **nao** usar agente.
 - Guias: https://docs.langchain.com/oss/python/langgraph/overview
 - API: https://reference.langchain.com/python/langgraph/
 - BrasilAPI: https://brasilapi.com.br/docs
+
+## CI
+
+Cada push na `main` roda lint (`ruff`), o gate da BrasilAPI e os labs 3 e 4 com
+`--sem-llm` — a mecânica (Postgres, `interrupt()`, `Send`, subgrafos) é provada sem
+gastar cota de modelo nem expor chave. Ver [.github/workflows/ci.yml](.github/workflows/ci.yml).
+
+## Licença
+
+[MIT](LICENSE).

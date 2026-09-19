@@ -1,0 +1,8 @@
+# Só as actions do CI. As dependências Python ficam fixadas de propósito:
+# as versões foram verificadas em 19/set/2026 e o CLAUDE.md registra isso.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
