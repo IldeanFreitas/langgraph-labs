@@ -51,7 +51,8 @@ labs/
 ├── lab05/  servico.py      # mesa async: TimeoutPolicy, error_handler, RunControl
 ├── langgraph.json          # os 5 grafos servidos por `langgraph dev` (lab 3 via fábrica)
 ├── Dockerfile              # gerado por `langgraph dockerfile`; .dockerignore barra o .env
-└── tests/test_grafos.py    # stub de modelo (lab 2) + --sem-llm (labs 4 e 5), 11 testes
+├── tests/test_grafos.py    # stub de modelo (lab 2) + --sem-llm (labs 4 e 5), 11 testes
+└── docs/                   # mapa do projeto: mapa.html (página) + mapa-labs.svg / mapa-servico.svg (README)
 ```
 
 ## Convenções

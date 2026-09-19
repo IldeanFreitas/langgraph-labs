@@ -15,6 +15,20 @@ não foi está marcado como tal.
 Cinco labs de ~1h, usando a **BrasilAPI** como fonte de dados e o **free tier do Gemini** como modelo.
 Custo: **R$ 0**.
 
+## Mapa do projeto
+
+Como os cinco labs se encaixam — cada seta diz o que o lab seguinte acrescenta; a
+fundacao em `src/labs` e o unico caminho para o modelo e para a BrasilAPI:
+
+![Os cinco labs em sequencia sobre a fundacao compartilhada e os servicos externos](docs/mapa-labs.svg)
+
+Como o grafo vira servico no lab 5 — o que esta tracejado em ambar existe, mas nao foi
+executado (exige `LANGSMITH_API_KEY`):
+
+![Do langgraph.json ao servidor de desenvolvimento e a imagem Docker](docs/mapa-servico.svg)
+
+Versao navegavel, com a tabela de estado e pendencias: [docs/mapa.html](docs/mapa.html).
+
 ## Stack (versoes verificadas em 19/set/2026)
 
 | Camada | Pacote | Versao |

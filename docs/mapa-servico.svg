@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="300" viewBox="0 0 1200 300" role="img" aria-label="O langgraph.json lista os cinco grafos; o langgraph dev os serve na porta 2024 para o SDK e o Studio; o langgraph dockerfile gera a imagem, cuja execução com langgraph up exige LANGSMITH_API_KEY e não foi executada.">
+  <style>
+    svg { color: #1C2733; font-family: 'IBM Plex Sans', 'Segoe UI', system-ui, -apple-system, sans-serif; }
+    .box { fill: #F5F7F4; stroke: currentColor; stroke-width: 1.2; }
+    .box.lab { fill: #E9EFEA; }
+    .box.ext { fill: #FFFFFF; stroke-dasharray: 3 3; }
+    .box.warn { fill: #FBEFD9; stroke: #A8681A; stroke-dasharray: 4 3; }
+    .box.done { stroke: #0F7B6C; }
+    .t { font-size: 12px; fill: currentColor; }
+    .t.h { font-weight: 600; font-size: 13px; }
+    .t.s { font-size: 11px; fill: #5F6B78; }
+    .t.m { font-family: 'IBM Plex Mono', Consolas, 'Courier New', monospace; font-size: 11px; }
+    .t.ok { fill: #0F7B6C; font-weight: 500; }
+    .t.wn { fill: #A8681A; font-weight: 500; }
+    .e { stroke: currentColor; stroke-width: 1.2; fill: none; }
+    .e.thin { stroke-width: 1; stroke: #5F6B78; }
+    .e.wn { stroke: #A8681A; stroke-dasharray: 4 3; }
+    .lane-label { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; fill: #5F6B78; }
+  </style>
+
+  <rect x="0" y="0" width="1200" height="300" fill="#FFFFFF"/>
+          <defs>
+            <marker id="arr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="currentColor"></path>
+            </marker>
+            <marker id="arrw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="#A8681A"></path>
+            </marker>
+          </defs>
+
+          <!-- langgraph.json -->
+          <rect x="40" y="90" width="250" height="120" rx="4" class="box lab"></rect>
+          <text x="52" y="110" class="t h">langgraph.json</text>
+          <text x="52" y="130" class="t m">lab02_roteador</text>
+          <text x="52" y="146" class="t m">lab03_persistente  (fábrica, sem Postgres)</text>
+          <text x="52" y="162" class="t m">lab04_paralelo · lab04_supervisor</text>
+          <text x="52" y="178" class="t m">lab05_servico</text>
+          <text x="52" y="198" class="t s">dependencies: ["."] · env: ./.env</text>
+
+          <!-- -> langgraph dev -->
+          <line x1="290" y1="120" x2="418" y2="70" class="e" marker-end="url(#arr2)"></line>
+          <text x="352" y="84" class="t s" text-anchor="middle">langgraph dev</text>
+
+          <rect x="420" y="40" width="250" height="70" rx="4" class="box done"></rect>
+          <text x="432" y="60" class="t h">LangGraph Server · :2024</text>
+          <text x="432" y="78" class="t m">checkpointer + store em memória, injetados</text>
+          <text x="432" y="96" class="t ok">executado · 5 grafos, interrupt do lab 3 via API</text>
+
+          <!-- clients -->
+          <rect x="820" y="30" width="200" height="50" rx="4" class="box done"></rect>
+          <text x="832" y="50" class="t h">langgraph_sdk</text>
+          <text x="832" y="68" class="t m">runs.wait · get_state · resume</text>
+          <line x1="820" y1="55" x2="672" y2="65" class="e" marker-end="url(#arr2)"></line>
+          <text x="746" y="48" class="t s" text-anchor="middle">HTTP + context</text>
+
+          <rect x="820" y="100" width="200" height="50" rx="4" class="box ext"></rect>
+          <text x="832" y="120" class="t h">Studio (navegador)</text>
+          <text x="832" y="138" class="t m">…/studio/?baseUrl=127.0.0.1:2024</text>
+          <line x1="820" y1="125" x2="672" y2="95" class="e thin" marker-end="url(#arr2)"></line>
+          <text x="760" y="122" class="t s" text-anchor="middle">HTTP · não aberto aqui</text>
+
+          <!-- -> dockerfile -->
+          <line x1="290" y1="180" x2="418" y2="220" class="e" marker-end="url(#arr2)"></line>
+          <text x="352" y="214" class="t s" text-anchor="middle">langgraph dockerfile</text>
+
+          <rect x="420" y="190" width="250" height="70" rx="4" class="box done"></rect>
+          <text x="432" y="210" class="t h">Dockerfile → langgraph-labs:lab05</text>
+          <text x="432" y="228" class="t m">FROM langchain/langgraph-api:3.12 · 1,1 GB</text>
+          <text x="432" y="246" class="t ok">imagem construída · .env fora (.dockerignore)</text>
+
+          <!-- -> langgraph up (not executed) -->
+          <line x1="670" y1="225" x2="818" y2="225" class="e wn" marker-end="url(#arrw)"></line>
+          <text x="744" y="217" class="t wn" text-anchor="middle">langgraph up</text>
+
+          <rect x="820" y="190" width="340" height="70" rx="4" class="box warn"></rect>
+          <text x="832" y="210" class="t h">Container · :8123</text>
+          <text x="832" y="228" class="t m">exige LANGSMITH_API_KEY · sobe Postgres + Redis</text>
+          <text x="832" y="246" class="t wn">não executado (sem chave) — passo 11 do lab 5</text>
+
+          <!-- CI note -->
+          <rect x="40" y="240" width="250" height="40" rx="4" class="box"></rect>
+          <text x="52" y="257" class="t h">GitHub Actions</text>
+          <text x="52" y="273" class="t s">ruff · pytest (11) · labs 3–5 --sem-llm com Postgres service</text>
+        </svg>

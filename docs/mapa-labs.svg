@@ -1,0 +1,141 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="470" viewBox="0 0 1200 470" role="img" aria-label="Os cinco labs em sequência, cada um acrescentando uma capacidade; abaixo deles a fundação compartilhada (get_model e brasilapi) e, abaixo dela, os serviços externos Gemini, BrasilAPI e Postgres.">
+  <style>
+    svg { color: #1C2733; font-family: 'IBM Plex Sans', 'Segoe UI', system-ui, -apple-system, sans-serif; }
+    .box { fill: #F5F7F4; stroke: currentColor; stroke-width: 1.2; }
+    .box.lab { fill: #E9EFEA; }
+    .box.ext { fill: #FFFFFF; stroke-dasharray: 3 3; }
+    .box.warn { fill: #FBEFD9; stroke: #A8681A; stroke-dasharray: 4 3; }
+    .box.done { stroke: #0F7B6C; }
+    .t { font-size: 12px; fill: currentColor; }
+    .t.h { font-weight: 600; font-size: 13px; }
+    .t.s { font-size: 11px; fill: #5F6B78; }
+    .t.m { font-family: 'IBM Plex Mono', Consolas, 'Courier New', monospace; font-size: 11px; }
+    .t.ok { fill: #0F7B6C; font-weight: 500; }
+    .t.wn { fill: #A8681A; font-weight: 500; }
+    .e { stroke: currentColor; stroke-width: 1.2; fill: none; }
+    .e.thin { stroke-width: 1; stroke: #5F6B78; }
+    .e.wn { stroke: #A8681A; stroke-dasharray: 4 3; }
+    .lane-label { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; fill: #5F6B78; }
+  </style>
+
+  <rect x="0" y="0" width="1200" height="470" fill="#FFFFFF"/>
+          <defs>
+            <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="currentColor"></path>
+            </marker>
+          </defs>
+
+          <!-- lane labels -->
+          <text x="40" y="24" class="lane-label">Labs · uma capacidade por vez</text>
+          <text x="40" y="218" class="lane-label">Fundação compartilhada · src/labs</text>
+          <text x="40" y="336" class="lane-label">Fora do repositório</text>
+
+          <!-- Lab 1 -->
+          <rect x="40" y="40" width="172" height="112" rx="4" class="box lab done"></rect>
+          <text x="52" y="60" class="t h">Lab 1 · Agente</text>
+          <text x="52" y="80" class="t m">create_agent + @tool</text>
+          <text x="52" y="96" class="t m">InMemorySaver, thread_id</text>
+          <text x="52" y="112" class="t m">stream(updates, v2)</text>
+          <text x="52" y="140" class="t s">~3 chamadas/pergunta</text>
+
+          <!-- 1 -> 2 -->
+          <line x1="212" y1="96" x2="266" y2="96" class="e" marker-end="url(#arr)"></line>
+          <text x="239" y="88" class="t s" text-anchor="middle">−2 LLM</text>
+
+          <!-- Lab 2 -->
+          <rect x="268" y="40" width="172" height="112" rx="4" class="box lab done"></rect>
+          <text x="280" y="60" class="t h">Lab 2 · Roteador</text>
+          <text x="280" y="80" class="t m">StateGraph + reducer</text>
+          <text x="280" y="96" class="t m">conditional edges, Command</text>
+          <text x="280" y="112" class="t m">RetryPolicy, CachePolicy</text>
+          <text x="280" y="140" class="t s">1 chamada/pergunta</text>
+
+          <!-- 2 -> 3 -->
+          <line x1="440" y1="96" x2="494" y2="96" class="e" marker-end="url(#arr)"></line>
+          <text x="467" y="88" class="t s" text-anchor="middle">+Postgres</text>
+
+          <!-- Lab 3 -->
+          <rect x="496" y="40" width="172" height="112" rx="4" class="box lab done"></rect>
+          <text x="508" y="60" class="t h">Lab 3 · Persistente</text>
+          <text x="508" y="80" class="t m">PostgresSaver + Store</text>
+          <text x="508" y="96" class="t m">interrupt() / resume</text>
+          <text x="508" y="112" class="t m">time travel, fork</text>
+          <text x="508" y="140" class="t s">3 chamadas no passo a passo</text>
+
+          <!-- 3 -> 4 -->
+          <line x1="668" y1="96" x2="722" y2="96" class="e" marker-end="url(#arr)"></line>
+          <text x="695" y="88" class="t s" text-anchor="middle">+Send</text>
+
+          <!-- Lab 4 -->
+          <rect x="724" y="40" width="172" height="112" rx="4" class="box lab done"></rect>
+          <text x="736" y="60" class="t h">Lab 4 · Mesa</text>
+          <text x="736" y="80" class="t m">Send (fan-out ≤ 3)</text>
+          <text x="736" y="96" class="t m">subgrafos, Command.PARENT</text>
+          <text x="736" y="112" class="t m">supervisor, RemainingSteps</text>
+          <text x="736" y="140" class="t s">2 chamadas/execução</text>
+
+          <!-- 4 -> 5 -->
+          <line x1="896" y1="96" x2="950" y2="96" class="e" marker-end="url(#arr)"></line>
+          <text x="923" y="88" class="t s" text-anchor="middle">+async</text>
+
+          <!-- Lab 5 -->
+          <rect x="952" y="40" width="172" height="112" rx="4" class="box lab done"></rect>
+          <text x="964" y="60" class="t h">Lab 5 · Serviço</text>
+          <text x="964" y="80" class="t m">TimeoutPolicy, error_handler</text>
+          <text x="964" y="96" class="t m">RunControl (drenagem)</text>
+          <text x="964" y="112" class="t m">langgraph dev, Docker</text>
+          <text x="964" y="140" class="t s">2 chamadas/execução</text>
+
+          <!-- bus from labs to foundation -->
+          <line x1="126" y1="152" x2="126" y2="186" class="e thin"></line>
+          <line x1="354" y1="152" x2="354" y2="186" class="e thin"></line>
+          <line x1="582" y1="152" x2="582" y2="186" class="e thin"></line>
+          <line x1="810" y1="152" x2="810" y2="186" class="e thin"></line>
+          <line x1="1038" y1="152" x2="1038" y2="186" class="e thin"></line>
+          <line x1="126" y1="186" x2="1038" y2="186" class="e thin"></line>
+          <line x1="240" y1="186" x2="240" y2="232" class="e thin" marker-end="url(#arr)"></line>
+          <line x1="770" y1="186" x2="770" y2="232" class="e thin" marker-end="url(#arr)"></line>
+          <text x="248" y="212" class="t s">todos os labs · 1 a 3 chamadas por execução</text>
+          <text x="778" y="212" class="t s">todos os labs · get() sync, aget() no lab 5</text>
+
+          <!-- foundation boxes -->
+          <rect x="40" y="234" width="400" height="60" rx="4" class="box"></rect>
+          <text x="52" y="254" class="t h">config.py · get_model()</text>
+          <text x="52" y="272" class="t m">init_chat_model(LAB_MODEL)  ·  único ponto que conhece o provedor</text>
+          <text x="52" y="286" class="t s">retry do 429: ModelRateLimitError, 20 s</text>
+
+          <rect x="520" y="234" width="500" height="60" rx="4" class="box"></rect>
+          <text x="532" y="254" class="t h">brasilapi.py · get() / aget()</text>
+          <text x="532" y="272" class="t m">httpx 10 s · lru_cache · BrasilAPIError (404: não repete)</text>
+          <text x="532" y="286" class="t m">BrasilAPIIndisponivel (rede: ConnectionError, repete)</text>
+
+          <rect x="1040" y="234" width="120" height="60" rx="4" class="box"></rect>
+          <text x="1052" y="254" class="t h">tests/</text>
+          <text x="1052" y="272" class="t m">gate + 9 grafos</text>
+          <text x="1052" y="286" class="t s">stub · --sem-llm</text>
+
+          <!-- foundation -> external -->
+          <line x1="240" y1="294" x2="240" y2="350" class="e thin" marker-end="url(#arr)"></line>
+          <text x="248" y="326" class="t s">HTTPS · free tier</text>
+          <line x1="770" y1="294" x2="770" y2="350" class="e thin" marker-end="url(#arr)"></line>
+          <text x="778" y="326" class="t s">HTTPS · pública, sem chave</text>
+
+          <!-- external boxes -->
+          <rect x="40" y="352" width="400" height="60" rx="4" class="box ext"></rect>
+          <text x="52" y="372" class="t h">Gemini (Google AI Studio)</text>
+          <text x="52" y="390" class="t m">gemini-3.8-flash · cota ~20 req/dia por modelo</text>
+          <text x="52" y="404" class="t s">429 com retryDelay; cota é por modelo → 3.7-flash abre outro balde</text>
+
+          <rect x="520" y="352" width="500" height="60" rx="4" class="box ext"></rect>
+          <text x="532" y="372" class="t h">BrasilAPI · brasilapi.com.br</text>
+          <text x="532" y="390" class="t m">/cep/v2 · /cnpj/v1 · /ddd/v1 · /banks/v1</text>
+          <text x="532" y="404" class="t s">~150 ms; pede uso real, sem automação em volume</text>
+
+          <rect x="1040" y="352" width="120" height="60" rx="4" class="box ext"></rect>
+          <text x="1052" y="372" class="t h">Postgres 16</text>
+          <text x="1052" y="390" class="t m">docker compose</text>
+          <text x="1052" y="404" class="t s">só o lab 3 (CLI)</text>
+
+          <!-- draft note -->
+          <text x="40" y="450" class="t s">Setas rotuladas = o que entra a mais. O servidor (figura 2) injeta seu próprio checkpointer: só a CLI do lab 3 fala com o Postgres.</text>
+        </svg>
