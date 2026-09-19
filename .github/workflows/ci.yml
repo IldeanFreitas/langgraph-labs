@@ -25,7 +25,7 @@ jobs:
       - run: uv run pytest tests -q
 
   labs-sem-llm:
-    name: labs 3 e 4 sem LLM
+    name: labs 3, 4 e 5 sem LLM
     runs-on: ubuntu-24.04
     needs: qualidade
     services:
