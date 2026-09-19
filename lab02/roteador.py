@@ -22,6 +22,7 @@ from dataclasses import dataclass
 from operator import add
 from typing import Annotated, Literal
 
+from langchain_core.exceptions import ModelRateLimitError
 from langgraph.cache.memory import InMemoryCache
 from langgraph.graph import END, START, StateGraph
 from langgraph.runtime import Runtime
@@ -146,6 +147,9 @@ def formatar(state: State, runtime: Runtime[Context]) -> dict:
 builder = StateGraph(State, context_schema=Context)
 
 # Politicas padrao para todos os nos - evita repetir em cada add_node.
+# A politica padrao repete ConnectionError e HTTP 5xx: e o caso de
+# BrasilAPIIndisponivel (rede). BrasilAPIError (404) e RuntimeError e NAO e
+# repetido - 404 nao melhora tentando de novo.
 #
 # TimeoutPolicy NAO entra aqui: na 1.2.x, timeout de no so vale para nos ASYNC,
 # porque execucao sincrona em Python nao pode ser cancelada com seguranca no
@@ -154,7 +158,14 @@ builder.set_node_defaults(
     retry_policy=RetryPolicy(max_attempts=3),
 )
 
-builder.add_node("classificar", classificar)
+# O no do modelo tem outra politica: o 429 do free tier pede ~20 s de espera,
+# e o intervalo padrao (0,5 s) nao chega la. ModelRateLimitError vem do
+# langchain_core - o lab continua sem importar SDK de provedor.
+builder.add_node(
+    "classificar",
+    classificar,
+    retry_policy=RetryPolicy(max_attempts=3, initial_interval=20.0, retry_on=ModelRateLimitError),
+)
 
 # CachePolicy: entrada igual nao refaz o trabalho. Economiza chamada a
 # BrasilAPI e respeita o pedido dela de nao gerar volume automatizado.

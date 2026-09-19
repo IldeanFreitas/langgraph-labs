@@ -12,7 +12,7 @@
 | Saida estruturada | Pydantic + `with_structured_output` |
 | `add_conditional_edges` | roteamento em Python puro, custo zero |
 | `Command` | atualizar estado e rotear no mesmo no |
-| `RetryPolicy` | resiliencia via `set_node_defaults` (timeout so em no async) |
+| `RetryPolicy` | padrao via `set_node_defaults`; o no do modelo sobrescreve com `retry_on=ModelRateLimitError` (timeout so em no async) |
 | `CachePolicy` | entrada repetida nao refaz o trabalho |
 
 ## A ideia
@@ -83,12 +83,15 @@ mudancas: o `Literal` da `Classificacao`, um no novo, e uma entrada no mapa do
 **Esperado:** falha na **primeira** tentativa, sem retry nenhum. A politica
 padrao (`default_retry_on`) so repete `ConnectionError` e HTTP 5xx; `ValueError`,
 `RuntimeError` e o resto da familia "bug de codigo" nao sao repetidos — e
-`BrasilAPIError` herda de `RuntimeError`. Agora troque para
+`BrasilAPIError` herda de `RuntimeError`. Ja `BrasilAPIIndisponivel` (rede)
+herda de `ConnectionError` e **e** repetida: desligue a rede e rode — tres
+tentativas. Agora troque o padrao para
 `RetryPolicy(max_attempts=3, retry_on=BrasilAPIError)`.
 **Esperado:** tres tentativas (esperas de 0,5 s e 1 s, mais jitter) antes de
 falhar — todas com 404, que nao melhora repetindo. Retry e para erro
-transitorio. O lab 3 faz a versao certa: `retry_on=ModelRateLimitError`, so
-para o 429 do modelo, com intervalo do tamanho que o provedor pede.
+transitorio. Repare que o no `classificar` ja tem a sua propria politica:
+`retry_on=ModelRateLimitError` com `initial_interval=20.0`, do tamanho do
+`retryDelay` que o 429 do free tier pede.
 
 **C. Meca o cache.** Coloque `print("  [cep] executando")` na primeira linha de
 `consultar_cep` e rode.
