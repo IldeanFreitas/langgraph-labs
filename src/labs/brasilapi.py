@@ -23,7 +23,6 @@ BASE_URL = "https://brasilapi.com.br/api"
 _HEADERS = {"User-Agent": "langgraph-labs/0.1"}
 
 _client = httpx.Client(base_url=BASE_URL, timeout=10.0, headers=_HEADERS)
-_aclient = httpx.AsyncClient(base_url=BASE_URL, timeout=10.0, headers=_HEADERS)
 
 
 class BrasilAPIError(RuntimeError):
@@ -56,11 +55,18 @@ _acache: dict[str, Any] = {}
 
 
 async def aget(path: str) -> dict | list:
-    """Versao async de get(), para nos async (lab 5). Mesmo cache, mesmas excecoes."""
+    """Versao async de get(), para nos async (lab 5). Mesmo cache, mesmas excecoes.
+
+    O AsyncClient e aberto por chamada, nao global: um client async fica preso
+    ao event loop em que nasceu, e com mais de um loop (pytest-asyncio abre um
+    por teste; servidores tambem podem) aparece "Event loop is closed". Em
+    producao, abra um por aplicacao no lifespan do servidor.
+    """
     if path in _acache:
         return _acache[path]
     try:
-        resp = await _aclient.get(path)
+        async with httpx.AsyncClient(base_url=BASE_URL, timeout=10.0, headers=_HEADERS) as c:
+            resp = await c.get(path)
     except httpx.RequestError as exc:
         raise BrasilAPIIndisponivel(f"falha de rede ao chamar {path}: {exc}") from exc
     dados = _checar(resp, path)
