@@ -1,0 +1,12 @@
+{
+  "recommendations": [
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "charliermarsh.ruff",
+    "ms-azuretools.vscode-containers",
+    "humao.rest-client",
+    "ms-toolsai.jupyter",
+    "bierner.markdown-mermaid",
+    "tamasfe.even-better-toml"
+  ]
+}

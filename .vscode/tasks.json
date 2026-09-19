@@ -1,0 +1,49 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "deps: uv sync",
+      "type": "shell",
+      "command": "uv sync",
+      "problemMatcher": []
+    },
+    {
+      "label": "qa: ruff",
+      "type": "shell",
+      "command": "uv run ruff check --fix . ; uv run ruff format .",
+      "problemMatcher": []
+    },
+    {
+      "label": "qa: pytest",
+      "type": "shell",
+      "command": "uv run pytest -v",
+      "group": { "kind": "test", "isDefault": true },
+      "problemMatcher": []
+    },
+    {
+      "label": "gate: validar BrasilAPI",
+      "type": "shell",
+      "command": "uv run pytest tests/test_brasilapi.py -v",
+      "problemMatcher": []
+    },
+    {
+      "label": "infra: Postgres up",
+      "type": "shell",
+      "command": "docker compose up -d",
+      "problemMatcher": []
+    },
+    {
+      "label": "infra: Postgres down",
+      "type": "shell",
+      "command": "docker compose down",
+      "problemMatcher": []
+    },
+    {
+      "label": "run: langgraph dev",
+      "type": "shell",
+      "command": "uv run langgraph dev",
+      "isBackground": true,
+      "problemMatcher": []
+    }
+  ]
+}

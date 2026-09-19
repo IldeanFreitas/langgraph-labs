@@ -1,0 +1,27 @@
+### Gate de validacao da BrasilAPI (REST Client)
+### Rode cada bloco com "Send Request" ANTES de virar @tool.
+### Esperado em todos: HTTP 200 e JSON com os campos citados.
+
+### 1. CEP v2 -> cep, state, city, street, neighborhood
+GET {{brasilapi}}/cep/v2/68502290
+
+### 2. CNPJ v1 -> razao_social, nome_fantasia, cnae_fiscal_descricao, uf
+GET {{brasilapi}}/cnpj/v1/37896605000112
+
+### 3. DDD v1 -> state, cities[]
+GET {{brasilapi}}/ddd/v1/94
+
+### 4. Bancos v1 -> ispb, name, code, fullName
+GET {{brasilapi}}/banks/v1/341
+
+### 5. Feriados nacionais v1 -> [{date, name, type}]
+GET {{brasilapi}}/feriados/v1/2026
+
+### 6. Taxas v1 -> [{nome, valor}] (Selic, CDI, IPCA)
+GET {{brasilapi}}/taxas/v1
+
+### 7. Cambio - moedas disponiveis
+GET {{brasilapi}}/cambio/v1/moedas
+
+### 8. CEP inexistente -> 404. Confirme a forma do erro antes de tratar no codigo.
+GET {{brasilapi}}/cep/v2/00000000
