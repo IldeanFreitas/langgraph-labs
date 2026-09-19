@@ -44,6 +44,7 @@ from typing import Annotated, Literal
 from langchain_core.exceptions import ModelRateLimitError
 from langgraph.checkpoint.postgres import PostgresSaver
 from langgraph.graph import END, START, StateGraph
+from langgraph.graph.state import CompiledStateGraph
 from langgraph.runtime import Runtime
 from langgraph.store.postgres import PostgresStore
 from langgraph.types import Command, RetryPolicy, interrupt
@@ -217,6 +218,13 @@ builder.add_conditional_edges(
 builder.add_edge("cep", "formatar")
 builder.add_edge("cnpj", "formatar")
 builder.add_edge("formatar", END)
+
+
+def para_servidor(config: dict) -> CompiledStateGraph:
+    """Fábrica usada pelo langgraph.json (lab 5). Compila SEM checkpointer nem
+    store: o LangGraph Server injeta os dele, e um grafo com persistência
+    própria não pode ser servido."""
+    return builder.compile()
 
 
 @contextmanager

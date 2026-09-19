@@ -1,8 +1,8 @@
 # CI do laboratório. Dois jobs:
-#   qualidade    -> ruff + gate da BrasilAPI (tests/)
-#   labs-sem-llm -> labs 3 e 4 com --sem-llm: prova a mecânica (Postgres, interrupt,
-#                   Send, subgrafos) sem gastar cota de modelo nem expor chave.
-# Volume na BrasilAPI por execução: ~10 requisições. Não rode em loop.
+#   qualidade    -> ruff + pytest (gate da BrasilAPI + grafos com stub/--sem-llm)
+#   labs-sem-llm -> labs 3, 4 e 5 pela CLI com --sem-llm: prova a mecânica (Postgres,
+#                   interrupt, Send, subgrafos, timeouts, drenagem) sem cota nem chave.
+# Volume na BrasilAPI por execução: ~20 requisições, com cache. Não rode em loop.
 name: CI
 
 on:
@@ -58,6 +58,14 @@ jobs:
           set -o pipefail
           uv run python lab04/mesa.py paralelo --sem-llm | tee /dev/stderr | grep -q "ITAÚ UNIBANCO"
           uv run python lab04/mesa.py supervisor --sem-llm | tee /dev/stderr | grep -q "handoff valor=70040912"
+
+      - name: lab 5 - mesa async, timeouts e drenagem
+        shell: bash
+        run: |
+          set -o pipefail
+          uv run python lab05/servico.py mesa --sem-llm | tee /dev/stderr | grep -q "ITAÚ UNIBANCO"
+          uv run python lab05/servico.py mesa --sem-llm --timeout-consulta 0.001 | tee /dev/stderr | grep -q "timeout interno"
+          uv run python lab05/servico.py drenar | tee /dev/stderr | grep -q "DRENADO"
 
       - name: lab 3 - interrupt e retomada em processos separados
         shell: bash

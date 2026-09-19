@@ -1,0 +1,12 @@
+{
+  "python_version": "3.12",
+  "dependencies": ["."],
+  "graphs": {
+    "lab02_roteador": "./lab02/roteador.py:grafo",
+    "lab03_persistente": "./lab03/persistente.py:para_servidor",
+    "lab04_paralelo": "./lab04/mesa.py:grafo_paralelo",
+    "lab04_supervisor": "./lab04/mesa.py:grafo_supervisor",
+    "lab05_servico": "./lab05/servico.py:grafo"
+  },
+  "env": "./.env"
+}

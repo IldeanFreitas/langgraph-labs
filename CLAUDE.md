@@ -48,7 +48,10 @@ labs/
 ├── lab02/  roteador.py     # StateGraph + reducers + conditional edges
 ├── lab03/  persistente.py  # CLI: PostgresSaver + Store + interrupt() + time travel
 ├── lab04/  mesa.py         # Send (fan-out) + subgrafos + Command.PARENT + supervisor
-└── lab05/                  # a fazer
+├── lab05/  servico.py      # mesa async: TimeoutPolicy, error_handler, RunControl
+├── langgraph.json          # os 5 grafos servidos por `langgraph dev` (lab 3 via fábrica)
+├── Dockerfile              # gerado por `langgraph dockerfile`; .dockerignore barra o .env
+└── tests/test_grafos.py    # stub de modelo (lab 2) + --sem-llm (labs 4 e 5), 11 testes
 ```
 
 ## Convenções
@@ -69,7 +72,7 @@ labs/
 | 2 | Graph API: estado, reducers, roteamento (1 chamada de LLM) | Executado (3/5 perguntas; a 4ª caiu em 429 de cota) |
 | 3 | Postgres, `Store`, `interrupt()`, time travel | Executado (12 passos + 7 experimentos; LLM via `gemini-3.7-flash`, cota do 3.8 esgotada) |
 | 4 | `Send` (fan-out) + supervisor com 3 especialistas | Executado (2 partes, 7 experimentos; LLM via `gemini-3.7-flash`) |
-| 5 | `langgraph dev`, Studio, testes, Docker, async + timeouts | A fazer |
+| 5 | `langgraph dev`, Studio, testes, Docker, async + timeouts | Executado (11 passos + 6 experimentos; container só construído — rodar exige `LANGSMITH_API_KEY`) |
 
 ## Armadilhas já encontradas (não repetir)
 
@@ -107,6 +110,24 @@ labs/
 11. **`goto` para nó do pai sem `graph=Command.PARENT` não dá erro** — só um
     aviso `wrote to unknown channel branch:to:X, ignoring it`, e a execução
     termina em silêncio.
+12. **`error_handler` não segura falha de tarefa que rodou em paralelo** (bug
+    aberto langchain-ai/langgraph#8277 em 1.2.11): o handler roda, mas a
+    exceção sobe. Com uma tarefa só no superstep, funciona. Em fan-out, o nó
+    trata a própria falha (`try/except` + `asyncio.timeout`). Há um teste que
+    documenta o bug e vai falhar quando for corrigido.
+13. **Handler que devolve `dict` encerra o fluxo**: as arestas de saída do nó
+    que falhou não são seguidas. Para continuar, `Command(goto=...)`.
+14. **`set_node_defaults(timeout=)` alcança o nó interno do handler** — ele
+    precisa ser `async`, senão o `compile()` recusa.
+15. **Timeout é cooperativo**: `time.sleep` num nó async não é interrompido nem
+    marcado como timeout — o nó termina normalmente depois.
+16. **`httpx.AsyncClient` global fica preso ao event loop em que nasceu**: com um
+    loop por teste (pytest-asyncio), `Event loop is closed`. Client por chamada
+    nos labs; por aplicação (lifespan) em produção.
+17. **`langgraph --help`/`dev` no Windows quebra com `UnicodeEncodeError`** (emoji
+    no cp1252). `$env:PYTHONUTF8 = "1"` antes.
+18. **Grafo servido não pode ter checkpointer próprio**: o servidor injeta o
+    dele. O lab 3 expõe `para_servidor()` que compila sem Postgres.
 
 ## Ambiente
 
@@ -118,6 +139,10 @@ uv run python lab02/roteador.py
 uv run python lab03/persistente.py perguntar t1 "Qual o endereço do CEP 68502290?" --sem-llm
 uv run python lab04/mesa.py paralelo --sem-llm ; uv run python lab04/mesa.py supervisor --sem-llm
 docker exec langgraph-labs-pg psql -U langgraph -d langgraph -c "TRUNCATE checkpoints, checkpoint_blobs, checkpoint_writes, store"   # zera o lab 3
+uv run python lab05/servico.py mesa --sem-llm ; uv run python lab05/servico.py drenar
+$env:PYTHONUTF8 = "1"; uv run langgraph dev --no-browser     # http://127.0.0.1:2024
+uv run pytest tests -v                                       # 11 testes, sem cota
+docker build -t langgraph-labs:lab05 .                       # imagem do LangGraph Server
 ```
 
 Tarefas do VS Code em `Ctrl+Shift+P > Tasks: Run Task`.

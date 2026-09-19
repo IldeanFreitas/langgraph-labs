@@ -3,7 +3,7 @@
 [![CI](https://github.com/IldeanFreitas/langgraph-labs/actions/workflows/ci.yml/badge.svg)](https://github.com/IldeanFreitas/langgraph-labs/actions/workflows/ci.yml)
 [![Licença MIT](https://img.shields.io/badge/licen%C3%A7a-MIT-blue.svg)](LICENSE)
 
-> **Status: Em evolução** — labs 1 a 4 executados em 19/09/2026 (labs 3 e 4 com `gemini-3.7-flash`, porque a cota diária do 3.8 acabou no meio do dia). O lab 5 entra no repositório quando for concluído.
+> **Status: Concluído** — os 5 labs foram executados em 19/09/2026 (labs 3 a 5 com `gemini-3.7-flash`, porque a cota diária do 3.8 acabou no meio do dia). O único passo não executado é subir o container do LangGraph Server, que exige `LANGSMITH_API_KEY` — está marcado como tal no lab 5.
 
 Estudo prático de [LangGraph](https://docs.langchain.com/oss/python/langgraph/overview) 1.2,
 construindo agentes e workflows sobre a [BrasilAPI](https://brasilapi.com.br/docs) — API pública,
@@ -25,9 +25,9 @@ Custo: **R$ 0**.
 | Checkpointer (lab 3+) | `langgraph-checkpoint-postgres` | 3.1.2 |
 | Dev server | `langgraph-cli[inmem]` | 0.4.31 |
 
-Ambiente: Windows + Python 3.12 + `uv`. Docker Desktop roda **so o Postgres**;
-o Python roda nativo no Windows, sem WSL — o lab 5 migra para WSL quando o assunto
-passa a ser empacotar em container.
+Ambiente: Windows + Python 3.12 + `uv`, sem WSL. Docker Desktop roda o Postgres
+(lab 3) e constroi a imagem do LangGraph Server (lab 5) — o build funcionou
+direto do Windows, WSL nao foi necessario.
 
 ## Setup (uma vez)
 
@@ -71,7 +71,7 @@ passa a ser empacotar em container.
 | 2 | Graph API: estado, reducers, roteamento | `TypedDict` + `Annotated`, `Command`, `context_schema`/`Runtime`, `RetryPolicy`, cache de no | roteador deterministico (1 chamada de LLM) |
 | 3 | Persistencia e aprovacao humana | `PostgresSaver`, `durability`, `Store`, `interrupt()`, time travel | agente que sobrevive ao restart |
 | 4 | Paralelismo e multi-agente | `Send`, supervisor, `Command.PARENT`, subgrafos, streaming aninhado | mesa de consultas com relatorio |
-| 5 | Producao | `langgraph.json`, `langgraph dev`, Studio, `RunControl`, testes, Docker | servico com REST e traces |
+| 5 | Producao | nos async, `TimeoutPolicy`, `error_handler`, `RunControl`, `langgraph.json` + `langgraph dev`, SDK, testes com stub, `langgraph dockerfile` | os 5 grafos como servico REST + Studio, com imagem Docker |
 
 Cada lab vive em sua propria pasta (`lab01/` ... `lab05/`) e reaproveita `src/labs/`.
 Compare o lab 2 com o lab 1: e a melhor aula de quando **nao** usar agente.

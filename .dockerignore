@@ -1,0 +1,13 @@
+# O .env NUNCA entra na imagem: as variáveis vão por -e/--env-file em runtime.
+.env
+.venv/
+.git/
+.github/
+.pytest_cache/
+.ruff_cache/
+__pycache__/
+*.py[cod]
+.vscode/
+scripts/
+tests/
+requests.http
