@@ -13,7 +13,7 @@ on:
 jobs:
   qualidade:
     name: lint + gate da BrasilAPI
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7.0.1
       - uses: astral-sh/setup-uv@v10.1.0
@@ -26,7 +26,7 @@ jobs:
 
   labs-sem-llm:
     name: labs 3 e 4 sem LLM
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: qualidade
     services:
       postgres:
